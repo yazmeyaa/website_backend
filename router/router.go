@@ -16,7 +16,11 @@ func NewRouter(projectsController *controller.ProjectsController) *gin.Engine {
 
 	baseRouter := router.Group("/api")
 	projectsRouter := baseRouter.Group("/projects")
+	projectsRouter.GET("", projectsController.GetAll)
+	projectsRouter.GET("/:id", projectsController.GetById)
 	projectsRouter.POST("", projectsController.Create)
+	projectsRouter.DELETE("/:id", projectsController.Delete)
+	projectsRouter.PATCH("/:id", projectsController.Update)
 
 	return router
 }
