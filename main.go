@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"yazmeyaa_projects/config"
 	"yazmeyaa_projects/controller"
 	"yazmeyaa_projects/helper"
@@ -26,8 +28,15 @@ func main() {
 
 	routes := router.NewRouter(projectsController)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8888"
+	}
+
+	Addr := fmt.Sprintf(":%s", port)
+
 	server := &http.Server{
-		Addr:    ":8888",
+		Addr:    Addr,
 		Handler: routes,
 	}
 
