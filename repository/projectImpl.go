@@ -8,6 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type ProjectsRepositoryImpl struct {
+	Db *gorm.DB
+}
+
 func NewProjectsRepositoryImpl(Db *gorm.DB) *ProjectsRepositoryImpl {
 	return &ProjectsRepositoryImpl{Db: Db}
 }

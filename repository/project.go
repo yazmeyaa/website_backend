@@ -2,13 +2,7 @@ package repository
 
 import (
 	"yazmeyaa_projects/model"
-
-	"gorm.io/gorm"
 )
-
-type ProjectsRepositoryImpl struct {
-	Db *gorm.DB
-}
 
 type ProjectRepository interface {
 	Save(projects model.Project)

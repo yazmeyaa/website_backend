@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"yazmeyaa_projects/config"
 	"yazmeyaa_projects/controller"
 	"yazmeyaa_projects/helper"
@@ -19,26 +18,29 @@ import (
 func main() {
 	db := config.DatabaseConnection()
 	validate := validator.New()
+	appConfig := config.NewAppConfig()
 
 	db.Table("projects").AutoMigrate(&model.Project{})
+	db.Table("users").AutoMigrate(&model.User{})
 
 	projectsRepository := repository.NewProjectsRepositoryImpl(db)
 	projectsService := service.NewProjectsServiceImpl(projectsRepository, validate)
 	projectsController := controller.NewProjectsController(projectsService)
 
-	routes := router.NewRouter(projectsController)
+	userRepository := repository.NewUserRepository(db)
+	authService := service.NewAuthService(userRepository, validate)
+	authController := controller.NewAuthController(authService)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8888"
-	}
+	routes := router.NewRouter(projectsController, authController)
 
-	Addr := fmt.Sprintf(":%s", port)
+	Addr := fmt.Sprintf("%s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
 	server := &http.Server{
 		Addr:    Addr,
 		Handler: routes,
 	}
+
+	fmt.Printf("Server started: %s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
 	err := server.ListenAndServe()
 	helper.ErrorPanic(err)
