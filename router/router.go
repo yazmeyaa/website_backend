@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"yazmeyaa_projects/config"
 	"yazmeyaa_projects/controller"
 	"yazmeyaa_projects/helper"
 	"yazmeyaa_projects/middlewares"
@@ -14,9 +15,9 @@ import (
 
 func NewRouter(projectsController *controller.ProjectsController, authController *controller.AuthController) *gin.Engine {
 	router := gin.Default()
-	const secret string = "tTkOJFQu4S"
+	appConfig := config.NewAppConfig()
 
-	token, err := helper.CreateAccessToken(secret, int(time.Hour.Nanoseconds())*168)
+	token, err := helper.CreateAccessToken(appConfig.JWT.Secret, int(time.Hour.Nanoseconds())*168)
 	if err != nil {
 		helper.ErrorPanic(err)
 	}
@@ -36,15 +37,14 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 
 	authRouter := baseRouter.Group("/auth")
 	authRouter.POST("/login", authController.Login)
-	authRouter.POST("/register", middlewares.AuthJWTMiddleware(secret), authController.Register)
+	authRouter.POST("/register", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), authController.Register)
 
 	projectsRouter := baseRouter.Group("/projects")
-	projectsRouter.Use(middlewares.AuthJWTMiddleware(secret))
 	projectsRouter.GET("", projectsController.GetAll)
 	projectsRouter.GET("/:id", projectsController.GetById)
-	projectsRouter.POST("", projectsController.Create)
-	projectsRouter.DELETE("/:id", projectsController.Delete)
-	projectsRouter.PATCH("/:id", projectsController.Update)
+	projectsRouter.POST("", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Create)
+	projectsRouter.DELETE("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Delete)
+	projectsRouter.PATCH("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Update)
 
 	return router
 }
