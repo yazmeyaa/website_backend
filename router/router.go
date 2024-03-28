@@ -24,10 +24,11 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 
 	fmt.Printf("jwt is: %s\n", token)
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"*"},
-	}))
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowMethods = append(corsConfig.AllowMethods, "POST", "DELETE", "GET", "PUT")
+
+	router.Use(cors.New(corsConfig))
 
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, "Projects API")
