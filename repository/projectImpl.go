@@ -22,8 +22,9 @@ func (p ProjectsRepositoryImpl) Save(project model.Project) {
 }
 
 func (p ProjectsRepositoryImpl) Update(project model.Project) {
-	result := p.Db.Model(&project).Where("ID = ?", project.ID).Updates(project)
-	helper.ErrorPanic(result.Error)
+	// result := p.Db.Model(&project).Where("ID = ?", project.ID).Updates(project)
+	p.Db.Save(&project)
+	// helper.ErrorPanic(result.Error)
 }
 
 func (p ProjectsRepositoryImpl) Delete(projectId int) {
