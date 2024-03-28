@@ -22,7 +22,7 @@ func (p ProjectsRepositoryImpl) Save(project model.Project) {
 }
 
 func (p ProjectsRepositoryImpl) Update(project model.Project) {
-	result := p.Db.Model(&project).Where("id = ?", project.ID).Updates(project)
+	result := p.Db.Model(&project).Where("ID = ?", project.ID).Updates(project)
 	helper.ErrorPanic(result.Error)
 }
 
