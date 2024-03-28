@@ -26,7 +26,7 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
-	corsConfig.AllowMethods = append(corsConfig.AllowMethods, "POST", "DELETE", "GET", "PUT")
+	corsConfig.AllowMethods = append(corsConfig.AllowMethods, "POST", "DELETE", "GET", "PUT", "PATCH")
 
 	router.Use(cors.New(corsConfig))
 
