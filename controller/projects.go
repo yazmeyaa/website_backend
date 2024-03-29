@@ -26,11 +26,6 @@ func (controller *ProjectsController) Update(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&updateProjectsRequest)
 	helper.ErrorPanic(err)
 
-	tagId := ctx.Param("id")
-	id, err := strconv.Atoi(tagId)
-	helper.ErrorPanic(err)
-	updateProjectsRequest.ID = id
-
 	controller.projectsService.Update(updateProjectsRequest)
 
 	webResponse := response.Response{

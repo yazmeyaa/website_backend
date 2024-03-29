@@ -27,10 +27,10 @@ func (service *ProjectsServiceImpl) Create(project request.CreateProjectRequest)
 	helper.ErrorPanic(err)
 	tagModel := model.Project{
 		Name:        project.Name,
-		Href:        &project.Href,
+		Href:        project.Href,
 		Description: project.Description,
 		Img:         project.Img,
-		GithubUrl:   &project.GithubUrl,
+		GithubUrl:   project.GithubUrl,
 	}
 	service.ProjectsRepository.Save(tagModel)
 }
@@ -39,6 +39,7 @@ func (service *ProjectsServiceImpl) Update(project request.UpdateProjectRequest)
 	err := service.Validate.Struct(project)
 	helper.ErrorPanic(err)
 	tagModel := model.Project{
+		ID:          project.ID,
 		Name:        project.Name,
 		Href:        &project.Href,
 		Description: project.Description,
