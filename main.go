@@ -12,7 +12,6 @@ import (
 	"yazmeyaa_projects/service"
 
 	"github.com/go-playground/validator/v10"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
