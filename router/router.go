@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(projectsController *controller.ProjectsController, authController *controller.AuthController) *gin.Engine {
+func NewRouter(projectsController *controller.ProjectsController, authController *controller.AuthController, staticFilesController *controller.StaticFilesController) *gin.Engine {
 	router := gin.Default()
 	appConfig := config.NewAppConfig()
 
@@ -47,6 +47,10 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 	projectsRouter.POST("", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Create)
 	projectsRouter.DELETE("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Delete)
 	projectsRouter.PATCH("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Update)
+
+	staticFilesRouter := baseRouter.Group("/static")
+	staticFilesRouter.GET("/:id", staticFilesController.GetFile)
+	staticFilesRouter.POST("/", staticFilesController.UploadFile)
 
 	return router
 }

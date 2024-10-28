@@ -19,8 +19,7 @@ func main() {
 	validate := validator.New()
 	appConfig := config.NewAppConfig()
 
-	db.Table("projects").AutoMigrate(&model.Project{})
-	db.Table("users").AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Project{}, &model.User{}, &model.StaticFile{})
 
 	projectsRepository := repository.NewProjectsRepositoryImpl(db)
 	projectsService := service.NewProjectsServiceImpl(projectsRepository, validate)
@@ -30,7 +29,11 @@ func main() {
 	authService := service.NewAuthService(userRepository, validate)
 	authController := controller.NewAuthController(authService)
 
-	routes := router.NewRouter(projectsController, authController)
+	staticFileRepository := repository.NewStaticFileRepository(db)
+	staticFileService := service.NewStaticFileService(staticFileRepository)
+	staticFilesController := controller.NewStaticFilesController(staticFileService)
+
+	routes := router.NewRouter(projectsController, authController, staticFilesController)
 
 	Addr := fmt.Sprintf("%s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
