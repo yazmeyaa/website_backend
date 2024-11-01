@@ -44,7 +44,7 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := helper.CreateAccessToken(controller.appConfig.JWT.Secret, int(time.Hour.Nanoseconds())*168)
+	token, err := helper.CreateAccessToken(controller.appConfig.JWT.Secret, &user, int(time.Hour.Nanoseconds())*168)
 	helper.ErrorPanic(err)
 
 	ctx.Header("X-Token", token)
@@ -83,4 +83,8 @@ func (controller *AuthController) Register(ctx *gin.Context) {
 		Data:   user,
 	}
 	ctx.JSON(http.StatusNoContent, webResponse)
+}
+
+func (controller *AuthController) ValidateJWT(ctx *gin.Context) {
+	ctx.Status(http.StatusOK)
 }

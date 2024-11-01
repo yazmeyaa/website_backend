@@ -3,6 +3,7 @@ package helper
 import (
 	"fmt"
 	"time"
+	"yazmeyaa_projects/model"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -20,10 +21,11 @@ func IsAuthorized(requestToken string, secret string) (bool, error) {
 	return true, nil
 }
 
-func CreateAccessToken(secret string, expiry int) (accessToken string, err error) {
+func CreateAccessToken(secret string, user *model.User, expiry int) (accessToken string, err error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
 	claims := jwt.MapClaims{
 		"exp": exp,
+		"iss": user.ID,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

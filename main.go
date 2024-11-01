@@ -33,7 +33,9 @@ func main() {
 	staticFileService := service.NewStaticFileService(staticFileRepository)
 	staticFilesController := controller.NewStaticFilesController(staticFileService)
 
-	routes := router.NewRouter(projectsController, authController, staticFilesController)
+	schemaController := controller.NewSchemasController()
+
+	routes := router.NewRouter(projectsController, authController, staticFilesController, schemaController)
 
 	Addr := fmt.Sprintf("%s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
