@@ -7,4 +7,5 @@ type UpdateProjectRequest struct {
 	Img         string `validate:"required,min=1,max=500" json:"img"`
 	Href        string `validate:"min=1,max=500" json:"href"`
 	GithubUrl   string `validate:"min=1,max=500" json:"githubUrl"`
+	ImgUrl      string `validate:"min=1,max=500" json:"imgUrl"`
 }

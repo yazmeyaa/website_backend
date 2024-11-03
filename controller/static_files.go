@@ -3,8 +3,9 @@ package controller
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"strconv"
+	"path/filepath"
 	"yazmeyaa_projects/service"
 
 	"github.com/gin-gonic/gin"
@@ -52,23 +53,21 @@ func (ic *StaticFilesController) UploadFile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"id":   savedFile.ID,
-		"path": savedFile.Path,
+		"path": savedFile.FileName,
 	})
 }
 
 func (ic *StaticFilesController) GetFile(ctx *gin.Context) {
-	id := ctx.Param("id")
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "wrong id provided"})
-		return
-	}
+	fileName := ctx.Param("fileName")
+	log.Default().Printf("Filename: >> [%s]", fileName)
 
-	file, err := ic.staticFileService.GetById(idInt)
+	file, err := ic.staticFileService.GetByFileName(fileName)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "file not found"})
 		return
 	}
+	uploadDir := "uploads"
+	filePath := filepath.Join(uploadDir, file.FileName)
 
-	ctx.File(file.Path)
+	ctx.File(filePath)
 }

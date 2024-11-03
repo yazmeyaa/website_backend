@@ -27,7 +27,7 @@ func (s *staticFileService) Create(filename string, data []byte) (*model.StaticF
 		return nil, fmt.Errorf("could not save file: %w", err)
 	}
 
-	file, err := s.repo.Create(filePath)
+	file, err := s.repo.Create(uniqueFilename)
 	if err != nil {
 		return nil, fmt.Errorf("could not save file record in database: %w", err)
 	}
@@ -41,6 +41,10 @@ func (s *staticFileService) Delete(id int) error {
 
 func (s *staticFileService) GetById(id int) (*model.StaticFile, error) {
 	return s.repo.GetById(id)
+}
+
+func (s *staticFileService) GetByFileName(fileName string) (*model.StaticFile, error) {
+	return s.repo.GetByFileName(fileName)
 }
 
 func NewStaticFileService(repo repository.StaticFileRepository) StaticFileService {

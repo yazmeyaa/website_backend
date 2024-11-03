@@ -45,6 +45,7 @@ func (service *ProjectsServiceImpl) Update(project request.UpdateProjectRequest)
 		Description: project.Description,
 		Img:         project.Img,
 		GithubUrl:   &project.GithubUrl,
+		ImgUrl:      &project.ImgUrl,
 	}
 	service.ProjectsRepository.Update(tagModel)
 }
@@ -65,6 +66,7 @@ func (service *ProjectsServiceImpl) FindById(projectId int) response.ProjectsRes
 		Description: result.Description,
 		Img:         result.Img,
 		GithubUrl:   result.GithubUrl,
+		ImgUrl:      result.ImgUrl,
 	}
 
 	return resp
@@ -82,6 +84,7 @@ func (service *ProjectsServiceImpl) FindAll() []response.ProjectsResponse {
 			Description: value.Description,
 			Img:         value.Img,
 			GithubUrl:   value.GithubUrl,
+			ImgUrl:      value.ImgUrl,
 		}
 		projects = append(projects, project)
 	}

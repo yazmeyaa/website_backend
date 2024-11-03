@@ -11,9 +11,9 @@ type staticFilesRepository struct {
 }
 
 // Create implements StaticFileRepository.
-func (s *staticFilesRepository) Create(path string) (*model.StaticFile, error) {
+func (s *staticFilesRepository) Create(fileName string) (*model.StaticFile, error) {
 	file := model.StaticFile{
-		Path: path,
+		FileName: fileName,
 	}
 	if err := s.db.Create(&file).Error; err != nil {
 		return nil, err
@@ -31,6 +31,16 @@ func (s *staticFilesRepository) GetById(id int) (*model.StaticFile, error) {
 	file := model.StaticFile{}
 
 	if err := s.db.Where("id = ?", id).First(&file).Error; err != nil {
+		return nil, err
+	}
+
+	return &file, nil
+}
+
+func (s *staticFilesRepository) GetByFileName(filename string) (*model.StaticFile, error) {
+	file := model.StaticFile{}
+
+	if err := s.db.Where("file_name = ?", filename).First(&file).Error; err != nil {
 		return nil, err
 	}
 

@@ -9,13 +9,16 @@ import (
 )
 
 type SchemasController struct {
-	projectSchema *schemas.ProjectSchema
+	projectSchema    *schemas.ProjectSchema
+	staticFileSchema *schemas.StaticFileSchema
 }
 
 func NewSchemasController() *SchemasController {
 	projectSchema := schemas.NewProjectSchema()
+	staticFileSchema := schemas.NewStaticFileSchema()
 	return &SchemasController{
-		projectSchema: projectSchema,
+		projectSchema:    projectSchema,
+		staticFileSchema: staticFileSchema,
 	}
 }
 
@@ -31,6 +34,14 @@ func (c *SchemasController) GetSchemaByName(ctx *gin.Context) {
 				"error": "Cannot encode schema.",
 			})
 		}
+		return
+	case "staticFile":
+		if err := encoder.Encode(c.projectSchema); err != nil {
+			ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Cannot encode schema.",
+			})
+		}
+		return
 	default:
 		ctx.JSON(http.StatusBadRequest, map[string]string{
 			"error": "Cannot get schema",

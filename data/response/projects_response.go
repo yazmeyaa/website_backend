@@ -7,4 +7,5 @@ type ProjectsResponse struct {
 	Img         string  `json:"img"`
 	Href        *string `json:"href"`
 	GithubUrl   *string `json:"githubUrl"`
+	ImgUrl      *string `json:"imgUrl"`
 }

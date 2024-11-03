@@ -40,7 +40,7 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 	projectsRouter.PATCH("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Update)
 
 	staticFilesRouter := baseRouter.Group("/static")
-	staticFilesRouter.GET("/:id", staticFilesController.GetFile)
+	staticFilesRouter.GET("/:fileName", staticFilesController.GetFile)
 	staticFilesRouter.POST("/", staticFilesController.UploadFile)
 
 	schemaRouter := baseRouter.Group("/schema")

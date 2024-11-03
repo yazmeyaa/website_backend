@@ -7,5 +7,5 @@ type Project struct {
 	Href        *string `gorm:"type: varchar(255)"`
 	Img         string  `gorm:"type: varchar(255)"`
 	GithubUrl   *string `gorm:"type: varchar(255)"`
-	ImgFileId   int     `gorm:"type: int"`
+	ImgUrl      *string `gorm:"type: string"`
 }
