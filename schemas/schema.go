@@ -36,14 +36,12 @@ func NewProjectSchema() *ProjectSchema {
 
 type StaticFileSchema struct {
 	ID       FieldSchema `json:"id"`
-	Name     FieldSchema `json:"name"`
 	FileName FieldSchema `json:"fileName"`
 }
 
 func NewStaticFileSchema() *StaticFileSchema {
 	return &StaticFileSchema{
 		ID:       FieldSchema{Type: SCHEMA_TYPE_NUMBER, Nullable: false, IsArray: false, Readonly: true},
-		Name:     FieldSchema{Type: SCHEMA_TYPE_STRING, Nullable: false, IsArray: false, Readonly: false},
 		FileName: FieldSchema{Type: SCHEMA_TYPE_STRING, Nullable: true, IsArray: false, Readonly: false},
 	}
 }

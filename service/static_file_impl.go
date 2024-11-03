@@ -15,6 +15,11 @@ type staticFileService struct {
 	repo repository.StaticFileRepository
 }
 
+// GetAll implements StaticFileService.
+func (s *staticFileService) GetAll() ([]model.StaticFile, error) {
+	return s.repo.GetAll()
+}
+
 func (s *staticFileService) Create(filename string, data []byte) (*model.StaticFile, error) {
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 		return nil, fmt.Errorf("could not create upload directory: %w", err)

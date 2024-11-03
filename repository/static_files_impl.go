@@ -10,6 +10,14 @@ type staticFilesRepository struct {
 	db *gorm.DB
 }
 
+// GetAll implements StaticFileRepository.
+func (s *staticFilesRepository) GetAll() ([]model.StaticFile, error) {
+	var files []model.StaticFile
+	result := s.db.Find(&files)
+
+	return files, result.Error
+}
+
 // Create implements StaticFileRepository.
 func (s *staticFilesRepository) Create(fileName string) (*model.StaticFile, error) {
 	file := model.StaticFile{

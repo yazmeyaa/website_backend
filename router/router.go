@@ -18,6 +18,7 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 	corsConfig.AllowAllOrigins = true
 	corsConfig.AllowMethods = []string{"POST", "DELETE", "GET", "PUT", "PATCH"}
 	corsConfig.AllowHeaders = []string{"authorization", "x-token", "X-Token", "Authorization", "content-type"}
+	corsConfig.AllowOrigins = []string{"http://localhost:5173"}
 
 	router.Use(cors.New(corsConfig))
 
@@ -40,8 +41,9 @@ func NewRouter(projectsController *controller.ProjectsController, authController
 	projectsRouter.PATCH("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Update)
 
 	staticFilesRouter := baseRouter.Group("/static")
+	staticFilesRouter.GET("/files", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), staticFilesController.GetAll)
 	staticFilesRouter.GET("/:fileName", staticFilesController.GetFile)
-	staticFilesRouter.POST("/", staticFilesController.UploadFile)
+	staticFilesRouter.POST("/", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), staticFilesController.UploadFile)
 
 	schemaRouter := baseRouter.Group("/schema")
 	schemaRouter.GET("/:name", schemaController.GetSchemaByName)

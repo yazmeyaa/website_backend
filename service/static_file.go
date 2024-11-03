@@ -6,5 +6,6 @@ type StaticFileService interface {
 	Create(filename string, data []byte) (*model.StaticFile, error)
 	GetByFileName(fileName string) (*model.StaticFile, error)
 	GetById(id int) (*model.StaticFile, error)
+	GetAll() ([]model.StaticFile, error)
 	Delete(id int) error
 }

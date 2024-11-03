@@ -36,7 +36,7 @@ func (c *SchemasController) GetSchemaByName(ctx *gin.Context) {
 		}
 		return
 	case "staticFile":
-		if err := encoder.Encode(c.projectSchema); err != nil {
+		if err := encoder.Encode(c.staticFileSchema); err != nil {
 			ctx.JSON(http.StatusInternalServerError, map[string]string{
 				"error": "Cannot encode schema.",
 			})
