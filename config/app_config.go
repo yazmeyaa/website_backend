@@ -8,13 +8,24 @@ import (
 )
 
 type AppConfig struct {
-	JWT struct {
-		Secret string `yaml:"secret_key"`
-	} `yaml:"jwt"`
-	Server struct {
-		Port string `yaml:"port"`
-		Host string `yaml:"host"`
-	} `yaml:"server"`
+	JWT    JWTConfig    `yaml:"jwt"`
+	Server ServerConfig `yaml:"server"`
+	Redis  RedisConfig  `yaml:"redis"`
+}
+
+type JWTConfig struct {
+	Secret string `yaml:"secret_key"`
+}
+
+type ServerConfig struct {
+	Port string `yaml:"port"`
+	Host string `yaml:"host"`
+}
+
+type RedisConfig struct {
+	Database int    `yaml:"database"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
 }
 
 func processError(err error) {

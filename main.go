@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"yazmeyaa_projects/config"
@@ -18,6 +19,19 @@ func main() {
 	db := config.DatabaseConnection()
 	validate := validator.New()
 	appConfig := config.NewAppConfig()
+	redisClient := config.RedisClient(appConfig)
+	corsService := service.NewCorsService(redisClient)
+
+	r, err := corsService.AddOrigin(context.Background(),
+		"http://localhost:5173",
+		[]string{"GET", "POST", "PATCH"},
+		[]string{"X-Token", "Authorization", "Content-Type", "Accept"},
+	)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("%+v", r)
 
 	db.AutoMigrate(&model.Project{}, &model.User{}, &model.StaticFile{})
 
@@ -35,7 +49,7 @@ func main() {
 
 	schemaController := controller.NewSchemasController()
 
-	routes := router.NewRouter(projectsController, authController, staticFilesController, schemaController)
+	routes := router.NewRouter(corsService, projectsController, authController, staticFilesController, schemaController)
 
 	Addr := fmt.Sprintf("%s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
@@ -46,6 +60,6 @@ func main() {
 
 	fmt.Printf("Server started: %s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	helper.ErrorPanic(err)
 }

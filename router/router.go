@@ -5,22 +5,16 @@ import (
 	"yazmeyaa_projects/config"
 	"yazmeyaa_projects/controller"
 	"yazmeyaa_projects/middlewares"
+	"yazmeyaa_projects/service"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(projectsController *controller.ProjectsController, authController *controller.AuthController, staticFilesController *controller.StaticFilesController, schemaController *controller.SchemasController) *gin.Engine {
+func NewRouter(corsService service.CorsService, projectsController *controller.ProjectsController, authController *controller.AuthController, staticFilesController *controller.StaticFilesController, schemaController *controller.SchemasController) *gin.Engine {
 	router := gin.Default()
 	appConfig := config.NewAppConfig()
 
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
-	corsConfig.AllowMethods = []string{"POST", "DELETE", "GET", "PUT", "PATCH"}
-	corsConfig.AllowHeaders = []string{"authorization", "x-token", "X-Token", "Authorization", "content-type"}
-	corsConfig.AllowOrigins = []string{"http://localhost:5173"}
-
-	router.Use(cors.New(corsConfig))
+	router.Use(middlewares.DynamicCorsMiddleware(corsService))
 
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, "Projects API")
