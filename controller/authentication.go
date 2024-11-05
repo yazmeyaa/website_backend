@@ -27,8 +27,10 @@ func NewAuthController(service service.AuthService) *AuthController {
 func (controller *AuthController) Login(ctx *gin.Context) {
 	credentails := request.AuthCredentails{}
 
-	err := ctx.ShouldBindJSON(&credentails)
-	helper.ErrorPanic(err)
+	if err := ctx.ShouldBindJSON(&credentails); err != nil {
+		helper.HandleHTTPError(ctx, http.StatusBadRequest, err)
+		return
+	}
 
 	user, err := controller.authService.CheckAuth(credentails)
 	if err != nil {
@@ -40,8 +42,11 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := helper.CreateAccessToken(controller.appConfig.JWT.Secret, &user, int(time.Hour.Nanoseconds())*168)
-	helper.ErrorPanic(err)
+	token, err := helper.CreateAccessToken(controller.appConfig.JWT.Secret, user, int(time.Hour.Nanoseconds())*168)
+	if err != nil {
+		helper.HandleHTTPError(ctx, http.StatusInternalServerError, err)
+		return
+	}
 
 	ctx.Header("X-Token", token)
 	ctx.Status(http.StatusNoContent)

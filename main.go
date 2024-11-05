@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"yazmeyaa_projects/config"
 	"yazmeyaa_projects/controller"
-	"yazmeyaa_projects/helper"
 	"yazmeyaa_projects/model"
 	"yazmeyaa_projects/repository"
 	"yazmeyaa_projects/router"
@@ -24,7 +23,7 @@ func main() {
 
 	projectsRepository := repository.NewProjectsRepositoryImpl(db)
 	projectsService := service.NewProjectsServiceImpl(projectsRepository, validate)
-	projectsController := controller.NewProjectsController(projectsService)
+	projectsController := controller.NewProjectsController(projectsService, validate)
 
 	userRepository := repository.NewUserRepository(db)
 	authService := service.NewAuthService(userRepository, validate)
@@ -51,5 +50,7 @@ func main() {
 	fmt.Printf("Server started: %s:%s", appConfig.Server.Host, appConfig.Server.Port)
 
 	err := server.ListenAndServe()
-	helper.ErrorPanic(err)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -1,9 +1,6 @@
 package service
 
 import (
-	"yazmeyaa_projects/data/request"
-	"yazmeyaa_projects/data/response"
-	"yazmeyaa_projects/helper"
 	"yazmeyaa_projects/model"
 	"yazmeyaa_projects/repository"
 
@@ -22,72 +19,27 @@ func NewProjectsServiceImpl(projectsRepository repository.ProjectRepository, val
 	}
 }
 
-func (service *ProjectsServiceImpl) Create(project request.CreateProjectRequest) {
-	err := service.Validate.Struct(project)
-	helper.ErrorPanic(err)
-	tagModel := model.Project{
-		Name:        project.Name,
-		Href:        project.Href,
-		Description: project.Description,
-		Img:         project.Img,
-		GithubUrl:   project.GithubUrl,
-	}
-	service.ProjectsRepository.Save(tagModel)
+func (service *ProjectsServiceImpl) Create(data repository.CreateProjectData) (*model.Project, error) {
+	return service.ProjectsRepository.Save(data)
 }
 
-func (service *ProjectsServiceImpl) Update(project request.UpdateProjectRequest) {
-	err := service.Validate.Struct(project)
-	helper.ErrorPanic(err)
-	tagModel := model.Project{
-		ID:          project.ID,
-		Name:        project.Name,
-		Href:        &project.Href,
-		Description: project.Description,
-		Img:         project.Img,
-		GithubUrl:   &project.GithubUrl,
-		ImgUrl:      &project.ImgUrl,
-	}
-	service.ProjectsRepository.Update(tagModel)
+func (service *ProjectsServiceImpl) Update(project *model.Project) error {
+	return service.ProjectsRepository.Update(project)
 }
 
-func (service *ProjectsServiceImpl) Delete(projectId int) {
-	service.ProjectsRepository.Delete(projectId)
+func (service *ProjectsServiceImpl) Delete(projectId int) error {
+	return service.ProjectsRepository.Delete(projectId)
 }
 
-func (service *ProjectsServiceImpl) FindById(projectId int) response.ProjectsResponse {
+func (service *ProjectsServiceImpl) FindById(projectId int) (*model.Project, error) {
 	result, err := service.ProjectsRepository.FindById(projectId)
 	if err != nil {
-		helper.ErrorPanic(err)
+		return nil, err
 	}
 
-	resp := response.ProjectsResponse{
-		Name:        result.Name,
-		Href:        result.Href,
-		Description: result.Description,
-		Img:         result.Img,
-		GithubUrl:   result.GithubUrl,
-		ImgUrl:      result.ImgUrl,
-	}
-
-	return resp
+	return result, nil
 }
 
-func (service *ProjectsServiceImpl) FindAll() []response.ProjectsResponse {
-	result := service.ProjectsRepository.FindAll()
-
-	var projects []response.ProjectsResponse
-	for _, value := range result {
-		project := response.ProjectsResponse{
-			ID:          value.ID,
-			Name:        value.Name,
-			Href:        value.Href,
-			Description: value.Description,
-			Img:         value.Img,
-			GithubUrl:   value.GithubUrl,
-			ImgUrl:      value.ImgUrl,
-		}
-		projects = append(projects, project)
-	}
-
-	return projects
+func (service *ProjectsServiceImpl) FindAll() ([]model.Project, error) {
+	return service.ProjectsRepository.FindAll()
 }

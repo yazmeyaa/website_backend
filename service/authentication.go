@@ -6,6 +6,6 @@ import (
 )
 
 type AuthService interface {
-	CheckAuth(credentails request.AuthCredentails) (user model.User, err error)
-	Create(credentails request.AuthCredentails) (user model.User, err error)
+	CheckAuth(credentails request.AuthCredentails) (user *model.User, err error)
+	Create(credentails request.AuthCredentails) (user *model.User, err error)
 }

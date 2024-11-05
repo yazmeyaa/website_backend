@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"yazmeyaa_projects/data/request"
-	"yazmeyaa_projects/helper"
 	"yazmeyaa_projects/model"
 	"yazmeyaa_projects/repository"
 
@@ -24,7 +23,7 @@ func NewAuthService(repository repository.UserRepository, validate *validator.Va
 	}
 }
 
-func (service *AuthServiceImpl) GetUser(username string) (model.User, error) {
+func (service *AuthServiceImpl) GetUser(username string) (*model.User, error) {
 	user, err := service.UserRepository.FindByUsername(username)
 	if err != nil {
 		return user, err
@@ -33,7 +32,7 @@ func (service *AuthServiceImpl) GetUser(username string) (model.User, error) {
 	}
 }
 
-func (service *AuthServiceImpl) CheckAuth(credentails request.AuthCredentails) (user model.User, err error) {
+func (service *AuthServiceImpl) CheckAuth(credentails request.AuthCredentails) (user *model.User, err error) {
 	validationError := service.Validate.Struct(credentails)
 	if validationError != nil {
 		return user, errors.New("not valid json")
@@ -53,25 +52,24 @@ func (service *AuthServiceImpl) CheckAuth(credentails request.AuthCredentails) (
 	return result, nil
 }
 
-func (service *AuthServiceImpl) Create(credentails request.AuthCredentails) (model.User, error) {
+func (service *AuthServiceImpl) Create(credentails request.AuthCredentails) (*model.User, error) {
 	validationError := service.Validate.Struct(credentails)
 	if validationError != nil {
-		return model.User{}, validationError
+		return nil, validationError
 	}
 
 	_, existUserError := service.GetUser(credentails.Username)
 	if existUserError == nil {
-		return model.User{}, errors.New("username is already taken")
+		return nil, errors.New("username is already taken")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(credentails.Password), 5)
-	helper.ErrorPanic(err)
-
-	user := model.User{
-		Password: string(hash),
-		Username: credentails.Username,
+	if err != nil {
+		return nil, err
 	}
 
-	service.UserRepository.Create(user)
-	return user, nil
+	return service.UserRepository.Create(repository.CreateUserData{
+		Username: credentails.Username,
+		Password: string(hash),
+	})
 }
