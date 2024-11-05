@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"yazmeyaa_projects/data/request"
-	"yazmeyaa_projects/data/response"
 	"yazmeyaa_projects/helper"
 	"yazmeyaa_projects/service"
 
@@ -28,13 +27,8 @@ func (controller *ProjectsController) Update(ctx *gin.Context) {
 
 	controller.projectsService.Update(updateProjectsRequest)
 
-	webResponse := response.Response{
-		Code:   http.StatusOK,
-		Status: "Ok",
-		Data:   nil,
-	}
 	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusOK, webResponse)
+	ctx.Status(http.StatusNoContent)
 }
 
 func (controller *ProjectsController) Create(ctx *gin.Context) {
@@ -44,14 +38,9 @@ func (controller *ProjectsController) Create(ctx *gin.Context) {
 	helper.ErrorPanic(err)
 
 	controller.projectsService.Create(createProjectRequest)
-	webResponse := response.Response{
-		Code:   http.StatusOK,
-		Status: "Ok",
-		Data:   nil,
-	}
 
 	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusOK, webResponse)
+	ctx.Status(http.StatusNoContent)
 }
 
 func (controller *ProjectsController) Delete(ctx *gin.Context) {
@@ -61,26 +50,15 @@ func (controller *ProjectsController) Delete(ctx *gin.Context) {
 
 	controller.projectsService.Delete(id)
 
-	webResponse := response.Response{
-		Code:   http.StatusNoContent,
-		Status: "Ok",
-		Data:   nil,
-	}
-
 	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusNoContent, webResponse)
+	ctx.Status(http.StatusNoContent)
 }
 
 func (controller *ProjectsController) GetAll(ctx *gin.Context) {
 	projectsResponse := controller.projectsService.FindAll()
-	webResponse := response.Response{
-		Code:   http.StatusOK,
-		Status: "Ok",
-		Data:   projectsResponse,
-	}
 
 	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusOK, webResponse)
+	ctx.JSON(http.StatusOK, projectsResponse)
 }
 
 func (controller *ProjectsController) GetById(ctx *gin.Context) {
@@ -90,12 +68,6 @@ func (controller *ProjectsController) GetById(ctx *gin.Context) {
 
 	project := controller.projectsService.FindById(id)
 
-	webResponse := response.Response{
-		Code:   http.StatusOK,
-		Status: "Ok",
-		Data:   project,
-	}
-
 	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusOK, webResponse)
+	ctx.JSON(http.StatusOK, project)
 }

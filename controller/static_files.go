@@ -87,11 +87,5 @@ func (ic *StaticFilesController) GetAll(ctx *gin.Context) {
 		}
 	}
 
-	resp := response.Response{
-		Code:   http.StatusOK,
-		Status: "OK",
-		Data:   data,
-	}
-
-	ctx.JSON(http.StatusOK, resp)
+	ctx.JSON(http.StatusOK, data)
 }

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 	"yazmeyaa_projects/config"
@@ -32,12 +31,9 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 	helper.ErrorPanic(err)
 
 	user, err := controller.authService.CheckAuth(credentails)
-	fmt.Println(user.Username)
 	if err != nil {
-		webResponse := response.Response{
-			Code:   http.StatusBadRequest,
-			Data:   err.Error(),
-			Status: "Bad Request",
+		webResponse := response.ErrorResponse{
+			Error: err.Error(),
 		}
 		ctx.JSON(http.StatusBadRequest, webResponse)
 		ctx.Abort()
@@ -48,6 +44,7 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 	helper.ErrorPanic(err)
 
 	ctx.Header("X-Token", token)
+	ctx.Status(http.StatusNoContent)
 }
 
 func (controller *AuthController) Register(ctx *gin.Context) {
@@ -55,10 +52,8 @@ func (controller *AuthController) Register(ctx *gin.Context) {
 
 	err := ctx.ShouldBindJSON(&credentails)
 	if err != nil {
-		webResponse := response.Response{
-			Code:   http.StatusBadRequest,
-			Status: "Bad request",
-			Data:   nil,
+		webResponse := response.ErrorResponse{
+			Error: err.Error(),
 		}
 		ctx.JSON(http.StatusBadRequest, webResponse)
 		ctx.Abort()
@@ -67,20 +62,17 @@ func (controller *AuthController) Register(ctx *gin.Context) {
 
 	user, createUserError := controller.authService.Create(credentails)
 	if createUserError != nil {
-		webResponse := response.Response{
-			Code:   http.StatusBadRequest,
-			Status: "Bad request",
-			Data:   createUserError.Error(),
+		webResponse := response.ErrorResponse{
+			Error: createUserError.Error(),
 		}
 		ctx.JSON(http.StatusBadRequest, webResponse)
 		ctx.Abort()
 		return
 	}
 
-	webResponse := response.Response{
-		Code:   http.StatusNoContent,
-		Status: "Created",
-		Data:   user,
+	webResponse := response.CreateUserResponse{
+		ID:       user.ID,
+		Username: user.Username,
 	}
 	ctx.JSON(http.StatusNoContent, webResponse)
 }

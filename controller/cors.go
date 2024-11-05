@@ -25,9 +25,8 @@ func (cc *CorsController) AddOrigin(ctx *gin.Context) {
 	origin := request.AddCorsOriginRequest{}
 	if err := ctx.ShouldBindJSON(&origin); err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
-		ctx.JSON(http.StatusBadRequest, response.Response{
-			Code:   http.StatusBadRequest,
-			Status: "Error",
+		ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
+			Error: err.Error(),
 		})
 		return
 	}
@@ -35,9 +34,8 @@ func (cc *CorsController) AddOrigin(ctx *gin.Context) {
 	record, err := cc.corsService.AddOrigin(ctx, origin.Origin, origin.AllowedMethods, origin.AllowedHeaders)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
-		ctx.JSON(http.StatusBadRequest, response.Response{
-			Code:   http.StatusBadRequest,
-			Status: "Error",
+		ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
+			Error: err.Error(),
 		})
 		return
 	}
@@ -60,15 +58,15 @@ func (cc *CorsController) DisableOrigin(ctx *gin.Context) {
 func (cc *CorsController) RemoveOrigin(ctx *gin.Context) {
 	origin := ctx.Param("origin")
 	if origin == "" {
-		ctx.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Empty origin param",
+		ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
+			Error: "Empty origin param",
 		})
 		return
 	}
 
 	if err := cc.corsService.RemoveOrigin(context.Background(), origin); err != nil {
-		ctx.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Empty origin param",
+		ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
+			Error: "Empty origin param",
 		})
 		return
 	}
@@ -80,9 +78,8 @@ func (cc *CorsController) GetAllOrigins(ctx *gin.Context) {
 	origins, err := cc.corsService.GetAllRecords(context.Background())
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
-		ctx.JSON(http.StatusBadRequest, response.Response{
-			Code:   http.StatusBadRequest,
-			Status: "Error",
+		ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
+			Error: err.Error(),
 		})
 		return
 	}
@@ -97,9 +94,5 @@ func (cc *CorsController) GetAllOrigins(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, response.Response{
-		Code:   http.StatusOK,
-		Status: "OK",
-		Data:   records,
-	})
+	ctx.JSON(http.StatusOK, records)
 }

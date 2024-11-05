@@ -14,12 +14,7 @@ func AuthJWTMiddleware(secret string) gin.HandlerFunc {
 		authHeader := ctx.Request.Header.Get("Authorization")
 		t := strings.Split(authHeader, " ")
 		if len(t) != 2 {
-			webResponse := response.Response{
-				Code:   http.StatusUnauthorized,
-				Status: "Unauthorized",
-				Data:   nil,
-			}
-			ctx.JSON(http.StatusUnauthorized, webResponse)
+			ctx.Status(http.StatusUnauthorized)
 			ctx.Abort()
 			return
 		}
@@ -28,10 +23,8 @@ func AuthJWTMiddleware(secret string) gin.HandlerFunc {
 		authorized, err := helper.IsAuthorized(authToken, secret)
 
 		if !authorized {
-			webResponse := response.Response{
-				Code:   http.StatusUnauthorized,
-				Status: "Unauthorized",
-				Data:   err.Error(),
+			webResponse := response.ErrorResponse{
+				Error: err.Error(),
 			}
 			ctx.JSON(http.StatusUnauthorized, webResponse)
 			ctx.Abort()
