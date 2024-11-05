@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(corsService service.CorsService, projectsController *controller.ProjectsController, authController *controller.AuthController, staticFilesController *controller.StaticFilesController, schemaController *controller.SchemasController) *gin.Engine {
+func NewRouter(corsService service.CorsService, projectsController *controller.ProjectsController, authController *controller.AuthController, staticFilesController *controller.StaticFilesController, schemaController *controller.SchemasController, corsController *controller.CorsController) *gin.Engine {
 	router := gin.Default()
 	appConfig := config.NewAppConfig()
 
@@ -35,9 +35,19 @@ func NewRouter(corsService service.CorsService, projectsController *controller.P
 	projectsRouter.PATCH("/:id", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), projectsController.Update)
 
 	staticFilesRouter := baseRouter.Group("/static")
-	staticFilesRouter.GET("/files", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), staticFilesController.GetAll)
 	staticFilesRouter.GET("/:fileName", staticFilesController.GetFile)
+	staticFilesRouter.GET("/files", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), staticFilesController.GetAll)
 	staticFilesRouter.POST("/", middlewares.AuthJWTMiddleware(appConfig.JWT.Secret), staticFilesController.UploadFile)
+
+	appSettingsRouter := baseRouter.Group("/settings")
+	appSettingsRouter.Use(middlewares.AuthJWTMiddleware(appConfig.JWT.Secret))
+
+	corsRouter := appSettingsRouter.Group("/cors")
+	corsRouter.GET("/", corsController.GetAllOrigins)
+	corsRouter.POST("/", corsController.AddOrigin)
+	corsRouter.PATCH("/:origin/disable", corsController.DisableOrigin)
+	corsRouter.PATCH("/:origin/enable", corsController.EnableOrigin)
+	corsRouter.DELETE("/:origin", corsController.RemoveOrigin)
 
 	schemaRouter := baseRouter.Group("/schema")
 	schemaRouter.GET("/:name", schemaController.GetSchemaByName)

@@ -13,6 +13,7 @@ var (
 )
 
 type CORSRecord struct {
+	Origin         string
 	OriginAllowed  bool
 	AllowedMethods []string
 	AllowedHeaders []string

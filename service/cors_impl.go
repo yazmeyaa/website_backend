@@ -19,6 +19,7 @@ const (
 // AddOrigin implements CorsService.
 func (c *corsServiceImpl) AddOrigin(ctx context.Context, origin string, methods []string, headers []string) (*cors.CORSRecord, error) {
 	record := cors.CORSRecord{
+		Origin:         origin,
 		OriginAllowed:  true,
 		AllowedMethods: methods,
 		AllowedHeaders: headers,
@@ -131,6 +132,7 @@ func (c *corsServiceImpl) GetRecord(ctx context.Context, origin string) (cors.CO
 		return record, err
 	}
 	record.AllowedHeaders = headers
+	record.Origin = origin
 
 	return record, nil
 }
